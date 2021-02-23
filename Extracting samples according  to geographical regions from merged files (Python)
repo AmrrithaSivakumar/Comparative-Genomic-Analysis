@@ -1,0 +1,20 @@
+#HPC environment
+import os
+import re
+# List all countries
+countries = ["brazil", "peru", "colombia"]
+# Search files ending with country name
+merged_files = []
+files = [file for file in os.listdir('/scratch/s323665/IRP/filt_vcf/')]
+merged_contents = ""
+t = []
+for file in files:
+    if  "_merged" in file:
+        t.append(file)
+        f = open('/scratch/{0}'.format(file))
+        merged_contents += f.read()
+        f.close()
+f = open("/scratch/{0}".format("checking.txt"), "a")
+f.write(merged_contents)
+f.close()
+#exit()
