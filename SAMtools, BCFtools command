@@ -1,0 +1,36 @@
+#Worked in a HPC environment provided by Cranfield University
+
+# python script to run the three commands across 119 samples:
+import os
+files = [file for file in os.listdir('/scratch/s323665/IRP/')]
+for file in files:
+ if file.endswith('g.vcf.gz'):
+  file = file[:-9]
+ elif file.endswith('filt.vcf.gz'):
+  file = file[:-12]
+ else:
+  continue
+ # First command
+ print ("Indexing filename:"+file)
+ os.system('bcftoolsindex /scratch/s323665/IRP/filt_vcf/'+file+'.filt.vcf.gz')
+ print ("Second command")
+ # Second command
+ if not os.path.exists(file+".gvcf.mask.bed"):
+  os.system("bcftools view -i 'FMT/DP<3' /scratch/"+file+".g.vcf.gz | bcftools convert --gvcf2vcf -f PvivaxP01.genome.fasta| bcftools query -f '%CHROM\t%POS\t%POS\n' > "+file+".gvcf.mask.bed")
+#exit()                                                                                       #to check if the command has run properly.
+ print ("Run successful")
+ for i in ['PvP01_14_v1:113324-120966', 'PvP01_05_v1:324795-328322', 'PvP01_12_v1:792292-793554', 'PvP01_03_v1:192753-193814', 'PvP01_08_v1:734622-737846', 'PvP01_12_v1:3000383-3000910', 'PvP01_09_v1:1459296-1460984', 'PvP01_07_v1:1206976-1212549', 'PvP01_07_v1:71450-80153', 'PvP01_07_v1:60453-69211', 'PvP01_08_v1:34100-42808', 'PvP01_14_v1:2953188-2961889', 'PvP01_01_v1:104127-107068']:                                                       #the gene length from data provided.
+  # Third command
+ if not os.path.exists("output/"+i+"_"+file+".m.consensus.fasta"):
+  os.system("samtools faidx PvivaxP01.genome.fasta "+i+" | bcftools consensus -m "+file+".gvcf.mask.bed  /scratch/"+file+".filt.vcf.gz | tr '*' 'N' | sed 's/>.*/>"+i+"_"+file+"/' > output/"+i+"_"+file+".m.consensus.fasta")
+
+
+
+
+
+
+
+
+
+
+    
