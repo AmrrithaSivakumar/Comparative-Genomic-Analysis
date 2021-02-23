@@ -18,3 +18,24 @@ f = open("/scratch/{0}".format("checking.txt"), "a")
 f.write(merged_contents)
 f.close()
 #exit()
+
+for file in files:
+    for country in countries:
+        if file.startswith("{0}_".format(country)):
+            # Read file contents line by line
+            f = open('/scratch/s323665/IRP/filt_vcf/{0}'.format(file))
+            lines = f.readlines()
+            for line in lines:
+                line = line.strip()
+                print("searching "+line)
+                output_file_name = country+"_"+"_".join(line.split('_')[0:3])[1:]+".fasta"
+                matched = re.search(line+"([^>]+>)", merged_contents)
+                txt = ""
+                if matched is not None:
+                    txt = matched.group()[:-1]
+          	     print("Writing output to file {0}".format(output_file_name))
+                output_file = open("/scratch/s323665/IRP/filt_vcf/satan/{0}".format(output_file_name), "a")
+                output_file.write(txt)
+                output_file.close()
+
+
